@@ -1,7 +1,23 @@
 import Link from "next/link";
 import { Header } from "../../../components/site/Header";
+import { login } from "../../../actions/auth";
+import { redirect } from "next/navigation";
 
 export default function LoginPage() {
+  async function handleLogin(formData: FormData) {
+    'use server';
+
+    const result = await login(formData);
+
+    if (result.error) {
+      // In a real app, you'd handle this with state management
+      console.error(result.error);
+      return;
+    }
+
+    redirect('/');
+  }
+
   return (
     <main className="min-h-screen bg-blue-50 text-slate-950">
       <Header />
@@ -41,7 +57,7 @@ export default function LoginPage() {
               </p>
             </div>
 
-            <form className="space-y-5">
+            <form action={handleLogin} className="space-y-5">
               <label className="block">
                 <span className="text-sm font-bold text-slate-700">
                   Correo

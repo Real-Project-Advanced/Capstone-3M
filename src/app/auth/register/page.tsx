@@ -1,7 +1,22 @@
 import Link from "next/link";
 import { Header } from "../../../components/site/Header";
+import { register } from "../../../actions/auth";
+import { redirect } from "next/navigation";
 
 export default function RegisterPage() {
+  async function handleRegister(formData: FormData) {
+    'use server';
+
+    const result = await register(formData);
+
+    if (result.error) {
+      console.error(result.error);
+      return;
+    }
+
+    redirect('/');
+  }
+
   return (
     <main className="min-h-screen bg-white text-slate-950">
       <Header />
@@ -22,7 +37,7 @@ export default function RegisterPage() {
               </p>
             </div>
 
-            <form className="space-y-5">
+            <form action={handleRegister} className="space-y-5">
               <label className="block">
                 <span className="text-sm font-bold text-slate-700">
                   Nombre completo
