@@ -3,7 +3,6 @@
 import { z } from 'zod';
 import { prisma } from '../lib/prisma';
 import { hashPassword, verifyPassword, generateToken, setAuthCookie } from '../lib/auth';
-import { redirect } from 'next/navigation';
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),

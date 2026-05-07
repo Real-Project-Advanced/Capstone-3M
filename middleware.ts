@@ -1,25 +1,37 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getCurrentUser } from './src/lib/auth';
+import { getCurrentUser, refreshUserTokens } from './src/lib/auth';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Public routes that don't require authentication
-  const publicRoutes = ['/auth/login', '/auth/register', '/bootstrap', '/status', '/'];
+  // Public routes que no requieren autenticación
+  const publicRoutes = ['/auth/login', '/auth/register', '/bootstrap', '/status', '/', '/api/auth/logout', '/api/auth/refresh'];
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
 
   if (isPublicRoute) {
     return NextResponse.next();
   }
 
-  // Check if user is authenticated
-  const user = await getCurrentUser();
+  // Verificar si el usuario está autenticado
+  let user = await getCurrentUser();
 
   if (!user) {
-    // Redirect to login if not authenticated
-    const loginUrl = new URL('/auth/login', request.url);
-    return NextResponse.redirect(loginUrl);
+    // Intentar refrescar tokens si el accessToken expiró
+    const newTokens = await refreshUserTokens();
+    
+    if (!newTokens) {
+      // Sin sesión válida, redirigir a login
+      return NextResponse.redirect(new URL('/auth/login', request.url));
+    }
+    
+    // Intenta nuevamente obtener el usuario con los nuevos tokens
+    user = await getCurrentUser();
+  }
+
+  if (!user) {
+    // Si aún sin usuario, redirigir a login
+    return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
   return NextResponse.next();
@@ -27,13 +39,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };

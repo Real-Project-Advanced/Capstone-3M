@@ -1,18 +1,23 @@
-import { bootstrap } from '@/actions/auth';
-import { redirect } from 'next/navigation';
+'use client';
+
+import { createSuperAdminAction } from '@/frontend/actions/bootstrap.actions';
+import { Form, FormField, FormButton } from '@/frontend/components/common/Form';
+import { useState } from 'react';
 
 export default function BootstrapPage() {
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
   async function handleBootstrap(formData: FormData) {
-    'use server';
+    const result = await createSuperAdminAction(formData);
     
-    const result = await bootstrap(formData);
-    
-    if (result.error) {
-      console.error(result.error);
-      return;
+    if ('error' in result && result.error) {
+      setError(result.error);
+      setSuccess(null);
+    } else if ('success' in result && result.success) {
+      setSuccess(result.message);
+      setError(null);
     }
-    
-    redirect('/auth/login');
   }
 
   return (
@@ -26,78 +31,59 @@ export default function BootstrapPage() {
           <p className="text-sm text-slate-600">Crear cuenta de administrador</p>
         </div>
 
-        <form action={handleBootstrap} className="space-y-4">
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Nombre Completo
-            </label>
-            <input
-              type="text"
-              name="fullname"
-              placeholder="Tu nombre completo"
-              className="w-full h-10 px-3 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-              required
-            />
+        {error && (
+          <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+            {error}
           </div>
+        )}
 
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              placeholder="tu@email.com"
-              className="w-full h-10 px-3 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-              required
-            />
+        {success && (
+          <div className="mb-4 p-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
+            {success}
           </div>
+        )}
 
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Mínimo 8 caracteres"
-              className="w-full h-10 px-3 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-              minLength={8}
-              required
-            />
-          </div>
+        <Form action={handleBootstrap} className="space-y-4">
+          <FormField
+            label="Nombre Completo"
+            name="fullname"
+            type="text"
+            placeholder="Tu nombre completo"
+            required
+          />
 
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Teléfono (Opcional)
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              placeholder="+57 300 123 4567"
-              className="w-full h-10 px-3 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-            />
-          </div>
+          <FormField
+            label="Email"
+            name="email"
+            type="email"
+            placeholder="tu@email.com"
+            required
+          />
 
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
-              Cédula (Opcional)
-            </label>
-            <input
-              type="text"
-              name="document_number"
-              placeholder="1234567890"
-              className="w-full h-10 px-3 rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-            />
-          </div>
+          <FormField
+            label="Contraseña"
+            name="password"
+            type="password"
+            placeholder="Mínimo 8 caracteres"
+            required
+          />
 
-          <button
-            type="submit"
-            className="w-full h-10 rounded-lg bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition"
-          >
-            Crear Cuenta SUPER_ADMIN
-          </button>
-        </form>
+          <FormField
+            label="Teléfono (Opcional)"
+            name="phone"
+            type="tel"
+            placeholder="+57 300 123 4567"
+          />
+
+          <FormField
+            label="Cédula (Opcional)"
+            name="document_number"
+            type="text"
+            placeholder="1234567890"
+          />
+
+          <FormButton>Crear Cuenta SUPER_ADMIN</FormButton>
+        </Form>
 
         <p className="text-xs text-slate-500 text-center mt-6">
           ⚠️ Esta página solo funciona si no existe un SUPER_ADMIN en el sistema

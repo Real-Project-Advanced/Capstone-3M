@@ -1,6 +1,8 @@
 import { getCurrentUser } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { AdminNavbar } from '@/frontend/components/layouts/AdminNavbar';
 
 export default async function AdminDashboard() {
   const user = await getCurrentUser();
@@ -13,11 +15,19 @@ export default async function AdminDashboard() {
     redirect('/');
   }
 
+  const [userCount, driverCount, vehicleCount, routeCount] = await Promise.all([
+    prisma.users.count(),
+    prisma.drivers.count(),
+    prisma.transports.count(),
+    prisma.routes.count(),
+  ]);
+
   return (
     <main className="min-h-screen bg-slate-50">
       <div className="max-w-7xl mx-auto p-6">
-        {/* Header */}
-        <div className="mb-8">
+        <AdminNavbar />
+
+        <div className="mt-6 mb-8">
           <h1 className="text-4xl font-black text-slate-950 mb-2">
             Panel Administrativo
           </h1>
@@ -29,10 +39,10 @@ export default async function AdminDashboard() {
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           {[
-            { title: 'Usuarios', value: '0', color: 'blue' },
-            { title: 'Conductores', value: '0', color: 'green' },
-            { title: 'Vehículos', value: '0', color: 'purple' },
-            { title: 'Rutas', value: '0', color: 'orange' },
+            { title: 'Usuarios', value: userCount, color: 'blue' },
+            { title: 'Conductores', value: driverCount, color: 'green' },
+            { title: 'Vehículos', value: vehicleCount, color: 'purple' },
+            { title: 'Rutas', value: routeCount, color: 'orange' },
           ].map((stat) => (
             <div
               key={stat.title}
