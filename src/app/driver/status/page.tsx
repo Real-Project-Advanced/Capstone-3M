@@ -1,22 +1,32 @@
-export default function DriverStatusPage() {
+import { getCurrentUser } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+
+export default async function DriverStatusPage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect('/login');
+  }
+
+  if (user.role !== 'DRIVER') {
+    redirect('/');
+  }
+
   return (
-    <main className="min-h-screen bg-zinc-950 text-white p-8">
-      <h1 className="text-3xl font-bold">Estado del conductor</h1>
+    <main className="min-h-screen bg-slate-50">
+      <div className="max-w-7xl mx-auto p-6">
+        <h1 className="text-4xl font-black text-slate-950 mb-2">
+          Estado de Servicio
+        </h1>
+        <p className="text-slate-600">
+          Actualiza tu estado de disponibilidad
+        </p>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 mt-8 max-w-2xl">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-semibold">Estado actual</h2>
-            <p className="text-zinc-400 mt-2">
-              El conductor está actualmente en servicio.
-            </p>
-          </div>
-
-          <div className="bg-green-500/20 text-green-400 px-5 py-2 rounded-xl border border-green-500/30">
-            Activo
-          </div>
+        {/* Driver status content */}
+        <div className="mt-8 bg-white rounded-lg shadow p-6">
+          <p className="text-slate-600">Control de estado de servicio próximamente...</p>
         </div>
       </div>
     </main>
-  )
+  );
 }

@@ -1,24 +1,33 @@
-export default function DriverDashboardPage() {
+import { getCurrentUser } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+
+export default async function DriverDashboardPage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect('/login');
+  }
+
+  if (user.role !== 'DRIVER') {
+    redirect('/');
+  }
+
   return (
-    <main className="min-h-screen bg-zinc-950 text-white p-8">
-      <h1 className="text-3xl font-bold">Panel del Conductor</h1>
+    <main className="min-h-screen bg-slate-50">
+      <div className="max-w-7xl mx-auto p-6">
+        <h1 className="text-4xl font-black text-slate-950 mb-2">
+          Panel del Conductor
+        </h1>
+        <p className="text-slate-600">
+          Bienvenido, <span className="font-bold">{user.fullname}</span>
+        </p>
 
-      <div className="grid md:grid-cols-3 gap-6 mt-8">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-          <h2 className="text-zinc-400">Ruta Asignada</h2>
-          <p className="text-3xl font-bold mt-3">Ruta 134</p>
-        </div>
-
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-          <h2 className="text-zinc-400">Estado</h2>
-          <p className="text-green-400 text-2xl font-bold mt-3">En servicio</p>
-        </div>
-
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-          <h2 className="text-zinc-400">Pasajeros</h2>
-          <p className="text-3xl font-bold mt-3">24</p>
+        {/* Driver dashboard content */}
+        <div className="mt-8 bg-white rounded-lg shadow p-6">
+          <h2 className="text-2xl font-bold mb-4">Estado de Servicio</h2>
+          <p className="text-slate-600">Panel de control para conductores próximamente...</p>
         </div>
       </div>
     </main>
-  )
+  );
 }

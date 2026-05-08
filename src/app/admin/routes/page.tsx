@@ -1,26 +1,32 @@
-export default function AdminRoutesPage() {
+import { getCurrentUser } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+
+export default async function AdminRoutesPage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect('/login');
+  }
+
+  if (user.role !== 'SUPER_ADMIN') {
+    redirect('/');
+  }
+
   return (
-    <main className="min-h-screen bg-zinc-950 text-white p-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">Administrar rutas</h1>
+    <main className="min-h-screen bg-slate-50">
+      <div className="max-w-7xl mx-auto p-6">
+        <h1 className="text-4xl font-black text-slate-950 mb-2">
+          Gestión de Rutas
+        </h1>
+        <p className="text-slate-600">
+          Administra todas las rutas del sistema
+        </p>
 
-        <button className="bg-purple-600 hover:bg-purple-700 px-5 py-3 rounded-xl font-medium transition">
-          Crear ruta
-        </button>
-      </div>
-
-      <div className="space-y-4">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex justify-between items-center">
-          <div>
-            <h2 className="font-semibold">Ruta 134</h2>
-            <p className="text-zinc-400 mt-1">San Javier → Centro</p>
-          </div>
-
-          <button className="bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded-xl">
-            Editar
-          </button>
+        {/* Admin routes content */}
+        <div className="mt-8 bg-white rounded-lg shadow p-6">
+          <p className="text-slate-600">Gestión de rutas próximamente...</p>
         </div>
       </div>
     </main>
-  )
+  );
 }
