@@ -1,21 +1,15 @@
 'use server';
 
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { prisma } from '../lib/prisma';
-import { hashPassword, verifyPassword, generateToken, setAuthCookie } from '../lib/auth';
+import { loginSchema } from '@/shared/validators';
+import { authService } from '@/services/auth.service';
+import { setAuthCookies } from '@/lib/auth';
 
-const loginSchema = z.object({
-  email: z.string().email('Email inválido'),
-  password: z.string().min(1, 'Contraseña requerida'),
-});
-
-const registerSchema = z.object({
-  name: z.string().min(2, 'Nombre debe tener al menos 2 caracteres'),
-  email: z.string().email('Email inválido'),
-  password: z.string().min(8, 'Contraseña debe tener al menos 8 caracteres'),
-});
-
-export async function login(formData: FormData) {
+/**
+ * Server Action: Login
+ */
+export async function loginAction(formData: FormData) {
   try {
     const data = {
       email: formData.get('email') as string,
@@ -23,41 +17,43 @@ export async function login(formData: FormData) {
     };
 
     const validatedData = loginSchema.parse(data);
+    const result = await authService.login(validatedData);
 
-    // Find user
-    const user = await prisma.users.findUnique({
-      where: { email: validatedData.email },
-    });
-
-    if (!user || !user.is_active) {
-      return { error: 'Usuario no encontrado o inactivo' };
+    if (!result.success) {
+      return { error: result.error };
     }
 
-    // Verify password
-    const isValidPassword = await verifyPassword(validatedData.password, user.password);
-    if (!isValidPassword) {
-      return { error: 'Contraseña incorrecta' };
+    if (result.data) {
+      // Generar y guardar tokens en cookies
+      const { generateTokens } = await import('@/lib/auth');
+      const tokens = generateTokens({
+        id: result.data.user.id,
+        email: result.data.user.email,
+        fullname: result.data.user.fullname,
+        role: result.data.user.role,
+      });
+      
+      await setAuthCookies(tokens);
+      redirect('/admin');
     }
 
-    // Generate token
-    const token = generateToken({
-      id: user.id,
-      email: user.email,
-      fullname: user.fullname,
-      role: user.role,
-    });
-
-    // Set cookie
-    await setAuthCookie(token);
-
-    return { success: true };
+    return { error: 'Error desconocido' };
   } catch (error) {
+    // No capturar errores de redirección de Next.js
+    if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
+      throw error;
+    }
+    
     if (error instanceof z.ZodError) {
       return { error: error.issues[0].message };
     }
-    console.error('Login error:', error);
-    return { error: 'Error interno del servidor' };
+    console.error('Login action error:', error);
+    return { error: 'Error al iniciar sesión' };
   }
+}
+
+export async function login(formData: FormData) {
+  return loginAction(formData);
 }
 
 export async function register(formData: FormData) {

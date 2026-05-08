@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Header } from "../components/site/Header";
+import { Header } from "@/components/common/Header";
 
 const routeCards = [
   {
