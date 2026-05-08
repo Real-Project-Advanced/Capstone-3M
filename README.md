@@ -13,9 +13,9 @@ Es una herramienta que revisa tu código y detecta errores o malas prácticas.
 
 **¿Para qué sirve?**
 
-* Evitar bugs antes de ejecutar el código
-* Mantener buenas prácticas
-* Asegurar calidad
+- Evitar bugs antes de ejecutar el código
+- Mantener buenas prácticas
+- Asegurar calidad
 
 **Ejemplo:**
 Te avisa si declaras variables que no usas o si haces cosas incorrectas.
@@ -29,8 +29,8 @@ Formatea el código automáticamente.
 
 **¿Para qué sirve?**
 
-* Hace que TODO el código tenga el mismo estilo
-* Evita discusiones tipo: “¿lleva espacios o no?”
+- Hace que TODO el código tenga el mismo estilo
+- Evita discusiones tipo: “¿lleva espacios o no?”
 
 ---
 
@@ -41,8 +41,8 @@ Ejecuta tareas automáticamente antes de hacer commit.
 
 **¿Qué hace en este proyecto?**
 
-* Corre ESLint antes de cada commit
-* Si hay errores → NO te deja hacer commit
+- Corre ESLint antes de cada commit
+- Si hay errores → NO te deja hacer commit
 
 **Importante:**
 
@@ -72,8 +72,8 @@ app/
 
 **Ejemplo:**
 
-* UI del mapa → aquí
-* Endpoint de IA → aquí
+- UI del mapa → aquí
+- Endpoint de IA → aquí
 
 ---
 
@@ -109,17 +109,17 @@ lib/
 
 ### 🤖 `lib/ai/`
 
-* Conexión con modelo IA
-* Generación de respuestas
-* (futuro) RAG y agentes
+- Conexión con modelo IA
+- Generación de respuestas
+- (futuro) RAG y agentes
 
 ---
 
 ### 🗄️ `lib/db/`
 
-* Conexión a DB
-* Conexión a MongoDB
-* Vector DB
+- Conexión a DB
+- Conexión a MongoDB
+- Vector DB
 
 ---
 
@@ -127,8 +127,8 @@ lib/
 
 Funciones pequeñas reutilizables:
 
-* cálculos
-* helpers
+- cálculos
+- helpers
 
 ---
 
@@ -178,11 +178,11 @@ actions/
 
 # 🚨 Reglas del Equipo
 
-* ❌ No usar `any` en TypeScript
-* ❌ No hacer push directo a `main` o `develop`
-* ✅ Todo va por Pull Request
-* ✅ Código limpio (ESLint + Prettier obligatorio)
-* ✅ Separar UI de lógica
+- ❌ No usar `any` en TypeScript
+- ❌ No hacer push directo a `main` o `develop`
+- ✅ Todo va por Pull Request
+- ✅ Código limpio (ESLint + Prettier obligatorio)
+- ✅ Separar UI de lógica
 
 ---
 
@@ -190,9 +190,9 @@ actions/
 
 Construir una plataforma inteligente de rutas de buses en Medellín usando:
 
-* Fullstack moderno (Next.js + TypeScript)
-* IA local (Ollama)
-* Arquitectura profesional
+- Fullstack moderno (Next.js + TypeScript)
+- IA local (Ollama)
+- Arquitectura profesional
 
 ---
 
