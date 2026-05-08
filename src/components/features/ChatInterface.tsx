@@ -54,7 +54,7 @@ export default function ChatInterface() {
         ...prev,
         { role: 'assistant', content: data.content },
       ])
-    } catch (_error) {
+    } catch (error) {
       setMessages((prev) => [
         ...prev,
         {
