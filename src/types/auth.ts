@@ -1,1 +1,1 @@
-type MyType = object
+export type MyType = object

@@ -5,7 +5,7 @@ import { refreshUserTokens } from '@/lib/auth';
  * POST /api/auth/refresh
  * Refrescar tokens usando el refresh token
  */
-export async function POST(request: Request) {
+export async function POST(_request: Request) {
   try {
     const newTokens = await refreshUserTokens();
 
