@@ -1,36 +1,200 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Guía Base del Proyecto
 
-## Getting Started
+Aqui se explica **cómo está organizado el proyecto** y **qué herramientas usamos**, para que todos trabajemos de forma consistente como un equipo bien organizado e informado.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# ⚙️ Herramientas del Proyecto
+
+## 🧹 ESLint
+
+**¿Qué es?**
+Es una herramienta que revisa tu código y detecta errores o malas prácticas.
+
+**¿Para qué sirve?**
+
+- Evitar bugs antes de ejecutar el código
+- Mantener buenas prácticas
+- Asegurar calidad
+
+**Ejemplo:**
+Te avisa si declaras variables que no usas o si haces cosas incorrectas.
+
+---
+
+## 🎨 Prettier
+
+**¿Qué es?**
+Formatea el código automáticamente.
+
+**¿Para qué sirve?**
+
+- Hace que TODO el código tenga el mismo estilo
+- Evita discusiones tipo: “¿lleva espacios o no?”
+
+---
+
+## 🐶 Husky
+
+**¿Qué es?**
+Ejecuta tareas automáticamente antes de hacer commit.
+
+**¿Qué hace en este proyecto?**
+
+- Corre ESLint antes de cada commit
+- Si hay errores → NO te deja hacer commit
+
+**Importante:**
+
+> No puedes subir código roto al repositorio
+
+---
+
+# 🧱 Arquitectura del Proyecto
+
+Todo el código vive dentro de:
+
+```
+src/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🧠 `app/` → Frontend + Backend
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Aquí vive lo principal del proyecto (Next.js).
 
-## Learn More
+```
+app/
+├── page.tsx        → Página principal (UI)
+├── api/            → Endpoints (backend)
+```
 
-To learn more about Next.js, take a look at the following resources:
+**Ejemplo:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- UI del mapa → aquí
+- Endpoint de IA → aquí
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🧩 `components/` → UI reutilizable
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Componentes visuales que se pueden usar varias veces.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+components/
+├── Map.tsx
+├── SearchBar.tsx
+├── RouteCard.tsx
+```
+
+**Regla:**
+
+> Aquí NO va lógica compleja, solo UI
+
+---
+
+## 🧠 `lib/` → Lógica del sistema
+
+Aquí vive lo importante del proyecto.
+
+```
+lib/
+├── ai/     → IA (Ollama, RAG, agentes)
+├── db/     → conexiones a bases de datos
+├── utils/  → funciones auxiliares
+```
+
+---
+
+### 🤖 `lib/ai/`
+
+- Conexión con modelo IA
+- Generación de respuestas
+- (futuro) RAG y agentes
+
+---
+
+### 🗄️ `lib/db/`
+
+- Conexión a DB
+- Conexión a MongoDB
+- Vector DB
+
+---
+
+### 🔧 `lib/utils/`
+
+Funciones pequeñas reutilizables:
+
+- cálculos
+- helpers
+
+---
+
+## 🧾 `types/` → Tipos de datos
+
+Define cómo son los datos en todo el sistema.
+
+```
+types/
+├── ruta.ts
+├── usuario.ts
+```
+
+**Ejemplo:**
+
+```
+type Ruta = {
+  id: string
+  nombre: string
+  paradas: string[]
+}
+```
+
+---
+
+## ⚙️ `actions/` → Server Actions
+
+Funciones del backend que se pueden llamar desde el frontend.
+
+```
+actions/
+├── crearRuta.ts
+├── obtenerRutas.ts
+```
+
+---
+
+# 🔀 Flujo básico del sistema
+
+1. Usuario interactúa con la UI (`app/`)
+2. Se llama a backend (`api/` o `actions/`)
+3. Se usa lógica (`lib/`)
+4. Se consultan datos (`db/`)
+5. Se devuelve respuesta al frontend
+
+---
+
+# 🚨 Reglas del Equipo
+
+- ❌ No usar `any` en TypeScript
+- ❌ No hacer push directo a `main` o `develop`
+- ✅ Todo va por Pull Request
+- ✅ Código limpio (ESLint + Prettier obligatorio)
+- ✅ Separar UI de lógica
+
+---
+
+# 🎯 Objetivo
+
+Construir una plataforma inteligente de rutas de buses en Medellín usando:
+
+- Fullstack moderno (Next.js + TypeScript)
+- IA local (Ollama)
+- Arquitectura profesional
+
+---
+
+Este README es la base.
+Si todos seguimos estas reglas, el proyecto escalará sin volverse un caos.

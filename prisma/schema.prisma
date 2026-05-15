@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model drivers {
+  id                              Int         @id @default(autoincrement())
+  user_id                         Int         @unique
+  transport_id                    Int?
+  license_type                    String      @db.VarChar(50)
+  experience_years                Int
+  license_expiration              DateTime    @db.Timestamp(6)
+  created_by                      Int
+  created_at                      DateTime    @default(now()) @db.Timestamp(6)
+  updated_at                      DateTime    @default(now()) @db.Timestamp(6)
+  users_drivers_created_byTousers users       @relation("drivers_created_byTousers", fields: [created_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_driver_admin_creator")
+  transports                      transports? @relation(fields: [transport_id], references: [id], onUpdate: NoAction, map: "fk_driver_transport")
+  users_drivers_user_idTousers    users       @relation("drivers_user_idTousers", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_driver_user")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model routes {
+  id           Int        @id @default(autoincrement())
+  origin       String
+  destination  String
+  transport_id Int
+  created_at   DateTime   @default(now()) @db.Timestamp(6)
+  updated_at   DateTime   @default(now()) @db.Timestamp(6)
+  transports   transports @relation(fields: [transport_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_route_transport")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model transports {
+  id         Int       @id @default(autoincrement())
+  plate      String    @unique @db.VarChar(50)
+  model      String    @db.VarChar(100)
+  capacity   Int
+  is_active  Boolean   @default(true)
+  created_at DateTime  @default(now()) @db.Timestamp(6)
+  updated_at DateTime  @default(now()) @db.Timestamp(6)
+  drivers    drivers[]
+  routes     routes[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model users {
+  id                                Int       @id @default(autoincrement())
+  fullname                          String    @db.VarChar(255)
+  email                             String    @unique @db.VarChar(255)
+  password                          String
+  phone                             String?   @db.VarChar(50)
+  document_number                   String?   @db.VarChar(100)
+  role                              user_role @default(USER)
+  is_active                         Boolean   @default(true)
+  created_at                        DateTime  @default(now()) @db.Timestamp(6)
+  updated_at                        DateTime  @default(now()) @db.Timestamp(6)
+  drivers_drivers_created_byTousers drivers[] @relation("drivers_created_byTousers")
+  drivers_drivers_user_idTousers    drivers?  @relation("drivers_user_idTousers")
+}
+
+enum user_role {
+  SUPER_ADMIN
+  DRIVER
+  USER
+}

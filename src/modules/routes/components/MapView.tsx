@@ -1,0 +1,49 @@
+'use client'
+
+import { MapContainer, TileLayer } from 'react-leaflet'
+
+import 'leaflet/dist/leaflet.css'
+import '@/lib/maps/leaflet-config'
+import { medellinBounds } from '@/lib/maps/medellin-bounds'
+import { mockRoutes } from '@/lib/maps/mock-routes'
+import { mockBuses } from '@//lib/maps/mock-buses'
+
+import RoutePolyline from './RoutePolyline'
+import BusMarker from './BusMarker'
+import RouteSidebar from './RouteSidebar'
+
+export default function MapView() {
+  return (
+    <div className="flex h-screen w-full">
+      <div className="flex-1">
+        <MapContainer
+          center={[6.2442, -75.5812]}
+          zoom={13}
+          minZoom={11}
+          maxZoom={18}
+          maxBounds={medellinBounds}
+          maxBoundsViscosity={1.0}
+          style={{
+            height: '100%',
+            width: '100%',
+          }}
+        >
+          <TileLayer
+            attribution="&copy; OpenStreetMap contributors"
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+
+          {mockRoutes.map((route) => (
+            <RoutePolyline key={route.id} route={route} />
+          ))}
+
+          {mockBuses.map((bus) => (
+            <BusMarker key={bus.id} bus={bus} />
+          ))}
+        </MapContainer>
+      </div>
+
+      <RouteSidebar />
+    </div>
+  )
+}
